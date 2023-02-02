@@ -1,7 +1,7 @@
 import ListGroup from 'react-bootstrap/ListGroup';
 
 
-const  StoreComponent = ({ model, inventory }) => {
+const  StoreComponent = ({ name, inventory }) => {
   let className = 'primary';
   if (inventory < 10) {
     className = 'danger'
@@ -10,7 +10,7 @@ const  StoreComponent = ({ model, inventory }) => {
   }
   return (
     <ListGroup.Item variant={className}>
-      {model}: {inventory}
+      {name}: {inventory}
     </ListGroup.Item>
   );
 }

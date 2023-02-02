@@ -3,17 +3,15 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import ModelComponent from './ModelComponent'
 
 
-const  StoreComponent = ({ name, store = {} }) => {
-  return (
-    <Card>
-      <Card.Header>{name}</Card.Header>
-      <ListGroup>
-        {Object.keys(store).map(model => (
-          <ModelComponent key={model} model={model} inventory={store[model]} />
-        ))}
-      </ListGroup>
-    </Card>
-  );
-}
+const  StoreComponent = ({ name, products = [] }) => (
+  <Card>
+    <Card.Header>{name}</Card.Header>
+    <ListGroup>
+      {products.map(model => (
+        <ModelComponent key={model.id} name={model.attributes.modelName} inventory={model.attributes.inventory} />
+      ))}
+    </ListGroup>
+  </Card>
+);
 
 export default StoreComponent;
