@@ -66,6 +66,7 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
+    awesome_print (1.9.2)
     bootsnap (1.16.0)
       msgpack (~> 1.2)
     builder (3.2.4)
@@ -83,6 +84,8 @@ GEM
     io-console (0.6.0)
     irb (1.6.2)
       reline (>= 0.3.0)
+    jsonapi-serializer (2.2.0)
+      activesupport (>= 4.2)
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -113,6 +116,8 @@ GEM
       nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.6.2)
+    rack-cors (1.1.1)
+      rack (>= 2.0.0)
     rack-test (2.0.2)
       rack (>= 1.3)
     rails (7.0.4.2)
@@ -157,10 +162,13 @@ PLATFORMS
   arm64-darwin-22
 
 DEPENDENCIES
+  awesome_print
   bootsnap
   debug
+  jsonapi-serializer (~> 2.2.0)
   pg (~> 1.1)
   puma (~> 5.0)
+  rack-cors (~> 1.1.1)
   rails (~> 7.0.4, >= 7.0.4.2)
   tzinfo-data
 
