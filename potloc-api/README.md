@@ -1,24 +1,11 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Back end API for potloc shoe-store inventory.
+Consider running `rails db:seed` to initialize a sample database
+In order to work correctly with the front end, this should be running in port 3000
 
-Things you may want to cover:
+* Ruby version: 3.2.0
 
-* Ruby version
+* Rails version: 7.0.4.2
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* System dependencies: PostgresQL
