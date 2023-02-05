@@ -1,6 +1,6 @@
 import Toast from 'react-bootstrap/Toast';
 
-const ToastComponent = ({ id, title, subtitle, inventory, onClose, variant, onClick }) => {
+const ToastComponent = ({ id, title, subtitle, inventory, onClose, variant, onClick, model }) => {
   let src = 'https://via.placeholder.com/20/cb444b?text='
   if (variant === 'warning') {
     src = 'https://via.placeholder.com/20/f6c444?text='
@@ -13,7 +13,7 @@ const ToastComponent = ({ id, title, subtitle, inventory, onClose, variant, onCl
         <small>{subtitle}</small>
       </Toast.Header>
       <Toast.Body onClick={onClick} className='cursor-pointer'>
-        The current inventory of this store is at {inventory}
+        The current inventory for {model} in this store is at {inventory}
       </Toast.Body>
     </Toast>
   );

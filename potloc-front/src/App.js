@@ -30,16 +30,16 @@ const  App = () => {
     return inventory
   }
 
-  const updateToasts = ({ inventory, id, store, storeId }) => {
+  const updateToasts = ({ inventory, id, store, storeId, model }) => {
     if (inventory < 10) {
       setToasts(prevToasts => [
         ...prevToasts.filter(toast => toast.id !== id),
-        { id, storeId, title: store, subtitle: 'Low inventory', inventory, variant: 'danger' }
+        { id, storeId, title: store, model, subtitle: 'Low inventory', inventory, variant: 'danger' }
       ]);
     } else if (inventory > 90) {
       setToasts(prevToasts => [
         ...prevToasts.filter(toast => toast.id !== id),
-        { id, storeId, title: store, subtitle: 'High inventory', inventory, variant: 'warning' }
+        { id, storeId, title: store, model, subtitle: 'High inventory', inventory, variant: 'warning' }
       ])
     }
   } 
@@ -48,12 +48,12 @@ const  App = () => {
     setProducts(prevProducts => {
       if (!prevProducts[store]) return prevProducts;
       const storeProducts = prevProducts[store]
-
       const productIndex = storeProducts.findIndex(item => item.attributes.modelName === model)
       if (!productIndex) return prevProducts;
+
       const storeId = stores.find(item => item.attributes.name === store).id
-      updateToasts({ store, inventory, id: `${storeId}_${model}`, storeId })
-      storeProducts[productIndex].inventory = inventory
+      updateToasts({ store, inventory, id: `${storeId}_${model}`, storeId, model })
+      storeProducts[productIndex].attributes.inventory = inventory
       return {
         ...prevProducts,
         [store]: storeProducts
