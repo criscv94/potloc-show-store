@@ -36,7 +36,7 @@ const  App = () => {
 
     let subtitle = 'Low inventory';
     let variant = 'danger';
-    const message = `The current inventory for ${model} in this store is at ${inventory}`
+    const message = `The current inventory of ${model} in this store is ${inventory}`
     if (inventory > 50) {
       variant = 'warning';
       subtitle = 'High inventory';
