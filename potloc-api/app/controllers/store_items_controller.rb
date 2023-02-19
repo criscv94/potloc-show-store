@@ -11,7 +11,7 @@ class StoreItemsController < ApplicationController
     return unless @store_item.update({ inventory: params[:inventory] })
 
     ActionCable.server.broadcast(
-      "store_#{@store_item.store_id}", 
+      "store_#{@store_item.store_id}",
       { body: StoreItemSerializer.new(@store_item), type: :inventory }
     )
     @store_item.inventory < 10 && RecommendJob.perform_later(params[:id])

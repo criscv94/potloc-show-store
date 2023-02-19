@@ -30,6 +30,5 @@ RSpec.describe 'StoreItem', type: :request do
         expect(store_item_response[:attributes][:modelName]).to eq @store_item.item.name
       end
     end
-
   end
 end
