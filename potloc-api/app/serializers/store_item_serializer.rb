@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StoreItemSerializer
   include JSONAPI::Serializer
   set_key_transform :camel_lower
@@ -5,9 +7,5 @@ class StoreItemSerializer
 
   attribute :model_name do |object|
     object.item.name
-  end
-
-  attribute :store_name do |object|
-    object.store.name
   end
 end
