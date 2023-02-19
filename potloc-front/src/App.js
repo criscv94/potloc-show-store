@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import consumer from './cable';
 import StoreComponent from './components/StoreComponent'
 import ToastComponent from './components/Toast'
 import './App.css';
@@ -21,45 +22,62 @@ const  App = () => {
   const parseInventoryData = (storeItemsData) => {
     const inventory = {}
     storeItemsData.forEach((storeItem) => {
-      if (inventory[storeItem.attributes.storeName]) {
-        inventory[storeItem.attributes.storeName].push(storeItem)
+      if (inventory[storeItem.attributes.storeId]) {
+        inventory[storeItem.attributes.storeId].push(storeItem)
       } else {
-        inventory[storeItem.attributes.storeName] = [storeItem]
+        inventory[storeItem.attributes.storeId] = [storeItem]
       }
     })
     return inventory
   }
 
-  const updateToasts = ({ inventory, id, store, storeId, model }) => {
-    if (inventory < 10) {
-      setToasts(prevToasts => [
-        ...prevToasts.filter(toast => toast.id !== id),
-        { id, storeId, title: store, model, subtitle: 'Low inventory', inventory, variant: 'danger' }
-      ]);
-    } else if (inventory > 90) {
-      setToasts(prevToasts => [
-        ...prevToasts.filter(toast => toast.id !== id),
-        { id, storeId, title: store, model, subtitle: 'High inventory', inventory, variant: 'warning' }
-      ])
+  const updateToasts = ({ inventory, id, title, model, storeId }) => {
+    if (inventory > 10 && inventory < 50) return;
+
+    let subtitle = 'Low inventory';
+    let variant = 'danger';
+    const message = `The current inventory for ${model} in this store is at ${inventory}`
+    if (inventory > 50) {
+      variant = 'warning';
+      subtitle = 'High inventory';
     }
+
+    setToasts(prevToasts => [
+      ...prevToasts.filter(toast => toast.id !== id),
+      { id, title, storeId, subtitle, variant, message }
+    ])
   } 
 
   const updateProducts = useCallback( ({ store, model, inventory }) => {
     setProducts(prevProducts => {
-      if (!prevProducts[store]) return prevProducts;
-      const storeProducts = prevProducts[store]
+      if (!prevProducts[store.id]) return prevProducts;
+      const storeProducts = prevProducts[store.id]
       const productIndex = storeProducts.findIndex(item => item.attributes.modelName === model)
-      if (!productIndex) return prevProducts;
-
-      const storeId = stores.find(item => item.attributes.name === store).id
-      updateToasts({ store, inventory, id: `${storeId}_${model}`, storeId, model })
+      if (!productIndex) return prevProducts;      
+      updateToasts({ title: store.attributes.name, inventory, id: `${store.id}_${model}`, model, storeId: store.id })
       storeProducts[productIndex].attributes.inventory = inventory
       return {
         ...prevProducts,
         [store]: storeProducts
       }
     })
-  }, [stores])
+  }, [])
+
+  const addRecommendation = useCallback( ({ originalStore, store, model }) => {
+    const id = 'test';
+    const message = `Request transfer of ${model} from ${store.attributes.name}`
+    setToasts(prevToasts => [
+      ...prevToasts.filter(toast => toast.id !== id),
+      {
+        id,
+        title: originalStore.name,
+        storeId: originalStore.id,
+        subtitle: 'Transfer suggestion',
+        variant: 'info',
+        message,
+      }
+    ])
+  }, [])
 
   const clickTab = (storeId) => {
     setActiveKey(storeId)
@@ -89,21 +107,32 @@ const  App = () => {
   }, [])
 
   useEffect(() => {
-    const websocket = new WebSocket('ws://localhost:8080/');
-
-    websocket.onopen = () => {
-      console.log('connected');
-    }
-
-    websocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      updateProducts(data)
-    }
+    if (stores.length === 0) return;
+    stores.forEach(store => {
+      consumer.subscriptions.create({
+        channel: 'StoresChannel',
+        store_id: store.id,
+      }, {
+        received: ({ body, type: eventType }) => {
+          const { data } = body;
+          if (eventType === 'inventory') {
+            const { inventory, modelName: model } = data.attributes
+            const store = stores.find(st => parseInt(st.id) === data.attributes.storeId)
+            updateProducts({ store, model, inventory })
+          } else if (eventType === 'recommend') {
+            const { inventory, modelName: model, storeId } = data.data.attributes
+            const { original_store: originalStore } = body;
+            const store = stores.find(st => parseInt(st.id) === storeId)
+            addRecommendation({ originalStore, store, model, inventory })
+          }
+        }
+      })  
+    })
   
     return () => {
-      websocket.close()
+      consumer.disconnect()
     }
-  }, [updateProducts])
+  }, [stores, updateProducts, addRecommendation])
 
   return (
     <Row >
@@ -121,7 +150,7 @@ const  App = () => {
               <StoreComponent 
                 key={store.id}
                 name={store.attributes.name}
-                products={products[store.attributes.name]}
+                products={products[store.id]}
               />
             </Tab>
           ))}            

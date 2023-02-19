@@ -1,10 +1,12 @@
 import Toast from 'react-bootstrap/Toast';
 
-const ToastComponent = ({ id, title, subtitle, inventory, onClose, variant, onClick, model }) => {
+const ToastComponent = ({ id, title, subtitle, message, onClose, variant, onClick }) => {
   let src = 'https://via.placeholder.com/20/cb444b?text='
   if (variant === 'warning') {
     src = 'https://via.placeholder.com/20/f6c444?text='
-  } 
+  } else if (variant === 'info') {
+    src = 'https://via.placeholder.com/20/5DC7EC?text='
+  }
   return (
     <Toast bg={variant} onClose={() => onClose(id)}>
       <Toast.Header>
@@ -13,7 +15,7 @@ const ToastComponent = ({ id, title, subtitle, inventory, onClose, variant, onCl
         <small>{subtitle}</small>
       </Toast.Header>
       <Toast.Body onClick={onClick} className='cursor-pointer'>
-        The current inventory for {model} in this store is at {inventory}
+        {message}
       </Toast.Body>
     </Toast>
   );
