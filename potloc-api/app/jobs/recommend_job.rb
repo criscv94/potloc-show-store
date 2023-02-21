@@ -8,7 +8,7 @@ class RecommendJob < ApplicationJob
     store_item_recommend = Item.find(store_item.item_id)
                                .store_items.where.not(store_id: store_item.store_id)
                                .order('inventory DESC').first
-    return unless store_item_recommend.inventory > 30
+    return unless store_item_recommend&.inventory > 30
 
     ActionCable.server.broadcast(
       "store_#{store_item.store_id}",
