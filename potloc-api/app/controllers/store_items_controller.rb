@@ -8,7 +8,7 @@ class StoreItemsController < ApplicationController
 
   def update
     @store_item = StoreItem.find(params[:id])
-    return unless @store_item.update({ inventory: params[:inventory] })
+    return unless @store_item.update(store_item_params)
 
     @store_item.inventory < 10 && RecommendJob.perform_later(params[:id])
     ActionCable.server.broadcast(

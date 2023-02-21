@@ -64,7 +64,7 @@ const  App = () => {
   }, [])
 
   const addRecommendation = useCallback( ({ originalStore, store, model }) => {
-    const id = 'test';
+    const id = `${originalStore.id}_${model}_${store.id}`;
     const message = `Request transfer of ${model} from ${store.attributes.name}`
     setToasts(prevToasts => [
       ...prevToasts.filter(toast => toast.id !== id),
